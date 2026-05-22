@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.CustomerName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Remark).HasMaxLength(500);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
         });
     }
 }

@@ -12,14 +12,12 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 使用SQLite作为默认数据库
+// 使用SQL Server数据库
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=AIServe.db"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<HandlerFactory>();
-builder.Services.AddScoped<Com.AIServe.Handlers.Reservation.Handlers.ReservationHandler>();
-builder.Services.AddScoped<Com.AIServe.Handlers.Setup.Handlers.SetupHandler>();
-builder.Services.AddScoped<Com.AIServe.Handlers.Setup.Handlers.LoginHandler>();
+// 自动扫描并注册所有 Handler
+builder.Services.AddHandlers();
 
 var app = builder.Build();
 
@@ -44,34 +42,7 @@ async Task InitializeDatabaseAsync(WebApplication app)
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
+    // 如果数据库不存在则创建，确保表结构正确
     await db.Database.EnsureCreatedAsync();
-    logger.LogInformation("数据库已就绪");
-
-    if (!await db.Reservations.AnyAsync())
-    {
-        await db.Reservations.AddRangeAsync(
-            new Com.AIServe.Common.Models.Reservation
-            {
-                CustomerName = "张三",
-                Phone = "13800138001",
-                ReservationTime = DateTime.Now.AddDays(1),
-                ServiceType = 1,
-                Status = 1,
-                Remark = "咨询预约",
-                CreatedAt = DateTime.Now
-            },
-            new Com.AIServe.Common.Models.Reservation
-            {
-                CustomerName = "李四",
-                Phone = "13800138002",
-                ReservationTime = DateTime.Now.AddDays(2),
-                ServiceType = 2,
-                Status = 2,
-                Remark = "保养服务",
-                CreatedAt = DateTime.Now
-            }
-        );
-        await db.SaveChangesAsync();
-        logger.LogInformation("已初始化种子数据");
-    }
+    logger.LogInformation("数据库已就绪，CreatedAt 字段有默认值 GETDATE()");
 }
