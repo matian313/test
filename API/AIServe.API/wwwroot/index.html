@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI预约服务系统</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>AI预约服务系统</h1>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span id="user-info" style="color: #667eea; font-weight: 500;"></span>
+                    <button class="btn btn-secondary btn-small" onclick="handleLogout()">退出登录</button>
+                </div>
+            </div>
+            <nav>
+                <button class="nav-btn active" data-page="reservation">预约管理</button>
+                <button class="nav-btn" data-page="setup">系统设置</button>
+            </nav>
+        </header>
+
+        <main id="app">
+            <div id="reservation-page" class="page active">
+                <div class="toolbar">
+                    <h2>预约列表</h2>
+                    <button class="btn btn-primary" onclick="showAddModal()">+ 新增预约</button>
+                    <button class="btn btn-secondary" onclick="loadReservations()">刷新</button>
+                </div>
+
+                <div class="table-container">
+                    <table id="reservation-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>客户姓名</th>
+                                <th>电话</th>
+                                <th>预约时间</th>
+                                <th>服务类型</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservation-tbody">
+                            <tr>
+                                <td colspan="7" class="loading">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="setup-page" class="page">
+                <div class="toolbar">
+                    <h2>系统设置</h2>
+                </div>
+                <div class="card">
+                    <div class="form-group">
+                        <label>系统名称</label>
+                        <input type="text" id="system-name">
+                    </div>
+                    <div class="form-group">
+                        <label>版本号</label>
+                        <input type="text" id="system-version">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="maintenance-mode">
+                            维护模式
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+                    <button class="btn btn-secondary" onclick="checkHealth()">健康检查</button>
+                </div>
+                <div id="health-result" class="health-result"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">新增预约</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>客户姓名 *</label>
+                    <input type="text" id="customer-name">
+                </div>
+                <div class="form-group">
+                    <label>电话 *</label>
+                    <input type="text" id="customer-phone">
+                </div>
+                <div class="form-group">
+                    <label>预约时间 *</label>
+                    <input type="datetime-local" id="reservation-time">
+                </div>
+                <div class="form-group">
+                    <label>服务类型</label>
+                    <select id="service-type">
+                        <option value="1">咨询服务</option>
+                        <option value="2">保养服务</option>
+                        <option value="3">维修服务</option>
+                        <option value="4">其他服务</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea id="remark" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveReservation()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
