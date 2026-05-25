@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace Com.AIServe.Handlers.Setup.Handlers;
 
+[Handler("report")]
 public class ReportHandler : IHandler
 {
     private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new()

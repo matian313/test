@@ -51,7 +51,7 @@ public class ApiServiceController : ControllerBase
         }
         catch (Exception e)
         {
-            LogHelper.Info($"ApiServiceController.Get【异常】方法:{method};请求唯一Id:【{uid}】;异常:{e.Message}");
+            LogHelper.Error($"ApiServiceController.Get【异常】方法:{method};请求唯一Id:【{uid}】", e);
             return ApiResponse.Fail(e.Message);
         }
     }
@@ -92,7 +92,7 @@ public class ApiServiceController : ControllerBase
         }
         catch (Exception e)
         {
-            LogHelper.Info($"ApiServiceController.Post【异常】方法:{method};请求唯一Id:【{uid}】;异常:{e.Message}");
+            LogHelper.Error($"ApiServiceController.Post【异常】方法:{method};请求唯一Id:【{uid}】", e);
             return ApiResponse.Fail(e.Message);
         }
     }

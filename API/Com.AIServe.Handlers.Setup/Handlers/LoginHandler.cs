@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace Com.AIServe.Handlers.Setup.Handlers;
 
+[Handler("login")]
 public class LoginHandler : IHandler
 {
     private static readonly Dictionary<string, string> _users = new()

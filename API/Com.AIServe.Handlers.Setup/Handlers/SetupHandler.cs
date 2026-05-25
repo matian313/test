@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace Com.AIServe.Handlers.Setup.Handlers;
 
+[Handler("setup")]
 public class SetupHandler : IHandler
 {
     private static SystemConfig _config = new();

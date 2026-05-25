@@ -9,6 +9,7 @@ using ReservationModel = Com.AIServe.Common.Models.Reservation;
 
 namespace Com.AIServe.Handlers.Reservation.Handlers;
 
+[Handler("reservation")]
 public class ReservationHandler : IHandler
 {
     private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new()
@@ -98,6 +99,7 @@ public class ReservationHandler : IHandler
         }
         catch (Exception ex)
         {
+            LogHelper.Error("保存预约失败", ex);
             return ApiResponse.Fail($"保存预约失败: {ex.Message}");
         }
     }
@@ -124,6 +126,7 @@ public class ReservationHandler : IHandler
         }
         catch (Exception ex)
         {
+            LogHelper.Error("更新预约状态失败", ex);
             return ApiResponse.Fail($"更新预约状态失败: {ex.Message}");
         }
     }

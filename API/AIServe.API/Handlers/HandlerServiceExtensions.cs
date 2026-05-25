@@ -1,3 +1,4 @@
+using System.Reflection;
 using Com.AIServe.Common.Handlers;
 using Com.AIServe.Handlers.Reservation.Handlers;
 using Com.AIServe.Handlers.Setup.Handlers;
@@ -12,16 +13,25 @@ public static class HandlerServiceExtensions
     /// </summary>
     public static IServiceCollection AddHandlers(this IServiceCollection services)
     {
-        // 显式注册所有 Handler
-        services.AddScoped<ReservationHandler>();
-        services.AddScoped<SetupHandler>();
-        services.AddScoped<LoginHandler>();
-        services.AddScoped<ReportHandler>();
+        var handlerMap = new Dictionary<string, Type>();
 
-        // 注册 Handler 工厂
-        services.AddScoped<HandlerFactory>();
+        // 注册所有 Handler 并建立映射
+        RegisterHandler<ReservationHandler>(services, handlerMap, "reservation");
+        RegisterHandler<SetupHandler>(services, handlerMap, "setup");
+        RegisterHandler<LoginHandler>(services, handlerMap, "login");
+        RegisterHandler<ReportHandler>(services, handlerMap, "report");
+
+        // 注册 Handler 工厂，传入映射关系
+        services.AddScoped<HandlerFactory>(sp => new HandlerFactory(sp, handlerMap));
 
         return services;
+    }
+
+    private static void RegisterHandler<T>(IServiceCollection services, Dictionary<string, Type> handlerMap, string prefix)
+        where T : class, IHandler
+    {
+        services.AddScoped<T>();
+        handlerMap[prefix] = typeof(T);
     }
 }
 
@@ -31,10 +41,12 @@ public static class HandlerServiceExtensions
 public class HandlerFactory
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly Dictionary<string, Type> _handlerMap;
 
-    public HandlerFactory(IServiceProvider serviceProvider)
+    public HandlerFactory(IServiceProvider serviceProvider, Dictionary<string, Type> handlerMap)
     {
         _serviceProvider = serviceProvider;
+        _handlerMap = handlerMap;
     }
 
     /// <summary>
@@ -42,23 +54,13 @@ public class HandlerFactory
     /// </summary>
     public IHandler? GetHandler(string action)
     {
-        if (action.StartsWith("reservation_"))
+        foreach (var (prefix, handlerType) in _handlerMap)
         {
-            return _serviceProvider.GetService<ReservationHandler>();
+            if (action.StartsWith(prefix + "_"))
+            {
+                return _serviceProvider.GetService(handlerType) as IHandler;
+            }
         }
-        else if (action.StartsWith("setup_"))
-        {
-            return _serviceProvider.GetService<SetupHandler>();
-        }
-        else if (action.StartsWith("login_"))
-        {
-            return _serviceProvider.GetService<LoginHandler>();
-        }
-        else if (action.StartsWith("report_"))
-        {
-            return _serviceProvider.GetService<ReportHandler>();
-        }
-
         return null;
     }
 }

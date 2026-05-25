@@ -1,5 +1,6 @@
 using Com.AIServe.Common.Data;
 using AIServe.API.Handlers;
+using AIServe.API.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddHandlers();
 
 var app = builder.Build();
+
+// 全局异常处理（放在最前面）
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
