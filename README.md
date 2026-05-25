@@ -30,10 +30,18 @@ AIServe.sln
 │   ├── Com.AIServe.Utils/              # 工具类库
 │   │   └── LogHelper.cs
 │   ├── Com.AIServe.Handlers.Reservation/  # 预约处理模块
-│   │   └── ReservationHandler.cs
+│   │   └── Handlers/
+│   │       └── ReservationHandler.cs
 │   └── Com.AIServe.Handlers.Setup/        # 系统设置模块
-│       ├── SetupHandler.cs
-│       └── LoginHandler.cs
+│       ├── Handlers/
+│       │   ├── SetupHandler.cs
+│       │   ├── LoginHandler.cs
+│       │   └── ReportHandler.cs
+│       └── Models/
+│           ├── SystemConfig.cs
+│           ├── LoginRequest.cs
+│           ├── LoginResponse.cs
+│           └── ReportData.cs
 └── doc/                                # 文档目录
 ```
 
