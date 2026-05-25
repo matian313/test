@@ -12,10 +12,11 @@ public static class HandlerServiceExtensions
     /// </summary>
     public static IServiceCollection AddHandlers(this IServiceCollection services)
     {
-        // 显式注册三个 Handler
+        // 显式注册所有 Handler
         services.AddScoped<ReservationHandler>();
         services.AddScoped<SetupHandler>();
         services.AddScoped<LoginHandler>();
+        services.AddScoped<ReportHandler>();
 
         // 注册 Handler 工厂
         services.AddScoped<HandlerFactory>();
@@ -52,6 +53,10 @@ public class HandlerFactory
         else if (action.StartsWith("login_"))
         {
             return _serviceProvider.GetService<LoginHandler>();
+        }
+        else if (action.StartsWith("report_"))
+        {
+            return _serviceProvider.GetService<ReportHandler>();
         }
 
         return null;

@@ -32,8 +32,9 @@ public class ReservationHandler : IHandler
         {
             "reservation_list" => await GetListAsync(),
             "reservation_get" => await GetAsync(query),
-            "reservation_create" => await CreateAsync(body),
-            "reservation_update" => await UpdateAsync(body),
+            "reservation_save" => await SaveAsync(body),
+            "reservation_create" => await SaveAsync(body),
+            "reservation_update" => await SaveAsync(body),
             "reservation_updatestatus" => await UpdateStatusAsync(body),
             "reservation_delete" => await DeleteAsync(query),
             _ => ApiResponse.Fail("无效的请求"),
@@ -59,7 +60,7 @@ public class ReservationHandler : IHandler
         return reservation != null ? ApiResponse.Ok(reservation) : ApiResponse.Fail("预约不存在");
     }
 
-    private async Task<ApiResponse> CreateAsync(string body)
+    private async Task<ApiResponse> SaveAsync(string body)
     {
         try
         {
@@ -69,46 +70,35 @@ public class ReservationHandler : IHandler
                 return ApiResponse.Fail("无效的请求数据");
             }
 
-            LogHelper.Info("创建预约");
-            reservation.CreatedAt = DateTime.Now;
-            reservation.Status = 1;
-            _db.Reservations.Add(reservation);
-            await _db.SaveChangesAsync();
-            return ApiResponse.Ok();
-        }
-        catch (Exception ex)
-        {
-            return ApiResponse.Fail($"创建预约失败: {ex.Message}");
-        }
-    }
+            var isCreate = reservation.Id <= 0;
 
-    private async Task<ApiResponse> UpdateAsync(string body)
-    {
-        try
-        {
-            var reservation = JsonSerializer.Deserialize<ReservationModel>(body, _jsonOptions);
-            if (reservation == null)
+            if (isCreate)
             {
-                return ApiResponse.Fail("无效的请求数据");
+                LogHelper.Info("创建预约");
+                reservation.CreatedAt = DateTime.Now;
+                reservation.Status = 1;
+                _db.Reservations.Add(reservation);
+            }
+            else
+            {
+                LogHelper.Info($"更新预约: {reservation.Id}");
+                var existing = await _db.Reservations.FirstOrDefaultAsync(r => r.Id == reservation.Id);
+                if (existing == null) return ApiResponse.Fail("预约不存在");
+
+                existing.CustomerName = reservation.CustomerName;
+                existing.Phone = reservation.Phone;
+                existing.ReservationTime = reservation.ReservationTime;
+                existing.ServiceType = reservation.ServiceType;
+                existing.Remark = reservation.Remark;
+                existing.UpdatedAt = DateTime.Now;
             }
 
-            LogHelper.Info($"更新预约: {reservation.Id}");
-            var existing = await _db.Reservations.FirstOrDefaultAsync(r => r.Id == reservation.Id);
-            if (existing == null) return ApiResponse.Fail("预约不存在");
-
-            existing.CustomerName = reservation.CustomerName;
-            existing.Phone = reservation.Phone;
-            existing.ReservationTime = reservation.ReservationTime;
-            existing.ServiceType = reservation.ServiceType;
-            existing.Remark = reservation.Remark;
-            existing.UpdatedAt = DateTime.Now;
-
             await _db.SaveChangesAsync();
             return ApiResponse.Ok();
         }
         catch (Exception ex)
         {
-            return ApiResponse.Fail($"更新预约失败: {ex.Message}");
+            return ApiResponse.Fail($"保存预约失败: {ex.Message}");
         }
     }
 
