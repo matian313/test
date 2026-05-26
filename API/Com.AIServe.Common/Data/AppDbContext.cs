@@ -10,18 +10,21 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // 只保留特殊配置（默认值SQL）
         modelBuilder.Entity<Reservation>(entity =>
         {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.CustomerName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
-            entity.Property(e => e.Remark).HasMaxLength(500);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("GETDATE()");
         });
     }
 }

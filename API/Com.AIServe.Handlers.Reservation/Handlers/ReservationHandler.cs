@@ -45,7 +45,10 @@ public class ReservationHandler : IHandler
     private async Task<ApiResponse> GetListAsync()
     {
         LogHelper.Info("获取在线预约");
-        var list = await _db.Reservations.OrderByDescending(r => r.CreatedAt).ToListAsync();
+        var list = await _db.Reservations
+            .AsNoTracking()
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
         return ApiResponse.Ok(list);
     }
 
@@ -57,7 +60,9 @@ public class ReservationHandler : IHandler
         }
 
         LogHelper.Info($"获取预约详情: {id}");
-        var reservation = await _db.Reservations.FirstOrDefaultAsync(r => r.Id == id);
+        var reservation = await _db.Reservations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == id);
         return reservation != null ? ApiResponse.Ok(reservation) : ApiResponse.Fail("预约不存在");
     }
 
@@ -65,11 +70,14 @@ public class ReservationHandler : IHandler
     {
         try
         {
+            LogHelper.Info($"接收到的请求体: {body}");
             var reservation = JsonSerializer.Deserialize<ReservationModel>(body, _jsonOptions);
             if (reservation == null)
             {
                 return ApiResponse.Fail("无效的请求数据");
             }
+
+            LogHelper.Info($"反序列化后: Id={reservation.Id}, Uid={reservation.Uid ?? "(null)"}, CustomerName={reservation.CustomerName}");
 
             var isCreate = reservation.Id <= 0;
 
@@ -91,6 +99,7 @@ public class ReservationHandler : IHandler
                 existing.ReservationTime = reservation.ReservationTime;
                 existing.ServiceType = reservation.ServiceType;
                 existing.Remark = reservation.Remark;
+                existing.Uid = reservation.Uid;
                 existing.UpdatedAt = DateTime.Now;
             }
 

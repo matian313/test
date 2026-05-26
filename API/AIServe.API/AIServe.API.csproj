@@ -9,12 +9,17 @@
     <ProjectReference Include="..\Com.AIServe.Utils\Com.AIServe.Utils.csproj" />
     <ProjectReference Include="..\Com.AIServe.Handlers.Reservation\Com.AIServe.Handlers.Reservation.csproj" />
     <ProjectReference Include="..\Com.AIServe.Handlers.Setup\Com.AIServe.Handlers.Setup.csproj" />
+    <ProjectReference Include="..\Com.AIServe.Handlers.User\Com.AIServe.Handlers.User.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

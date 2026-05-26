@@ -15,7 +15,9 @@ builder.Services.AddSwaggerGen();
 
 // 使用SQL Server数据库
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("AIServe.API")));
 
 // 自动扫描并注册所有 Handler
 builder.Services.AddHandlers();
@@ -46,7 +48,7 @@ async Task InitializeDatabaseAsync(WebApplication app)
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-    // 如果数据库不存在则创建，确保表结构正确
-    await db.Database.EnsureCreatedAsync();
-    logger.LogInformation("数据库已就绪，CreatedAt 字段有默认值 GETDATE()");
+    // 使用迁移方式更新数据库
+    await db.Database.MigrateAsync();
+    logger.LogInformation("数据库已就绪");
 }

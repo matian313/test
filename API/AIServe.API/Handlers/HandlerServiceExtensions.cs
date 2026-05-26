@@ -2,6 +2,7 @@ using System.Reflection;
 using Com.AIServe.Common.Handlers;
 using Com.AIServe.Handlers.Reservation.Handlers;
 using Com.AIServe.Handlers.Setup.Handlers;
+using Com.AIServe.Handlers.User.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AIServe.API.Handlers;
@@ -20,6 +21,7 @@ public static class HandlerServiceExtensions
         RegisterHandler<SetupHandler>(services, handlerMap, "setup");
         RegisterHandler<LoginHandler>(services, handlerMap, "login");
         RegisterHandler<ReportHandler>(services, handlerMap, "report");
+        RegisterHandler<UserHandler>(services, handlerMap, "user");
 
         // 注册 Handler 工厂，传入映射关系
         services.AddScoped<HandlerFactory>(sp => new HandlerFactory(sp, handlerMap));

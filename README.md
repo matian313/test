@@ -7,42 +7,44 @@ AI预约服务系统，使用 .NET 10 + EF Core + SQL Server 开发
 ```
 AIServe.sln
 ├── API/
-│   ├── AIServe.API/                    # 主API项目
+│   ├── AIServe.API/                      # 主API项目
 │   │   ├── Controllers/
 │   │   │   └── ApiServiceController.cs   # 统一API入口
 │   │   ├── Handlers/
 │   │   │   └── HandlerServiceExtensions.cs # Handler工厂和注册
-│   │   ├── wwwroot/
-│   │   │   ├── index.html              # 主页面
-│   │   │   ├── login.html              # 登录页面
-│   │   │   ├── css/style.css           # 样式
-│   │   │   └── js/                     # JavaScript
-│   │   ├── appsettings.json            # 配置文件
+│   │   ├── Middleware/
+│   │   │   └── ExceptionHandlingMiddleware.cs # 全局异常处理
+│   │   ├── wwwroot/                        # 主页面
+│   │   ├── appsettings.json              # 配置文件
 │   │   └── Program.cs
-│   ├── Com.AIServe.Common/             # 公共类库
+│   ├── Com.AIServe.Common/               # 公共类库
 │   │   ├── Models/
 │   │   │   ├── Reservation.cs
+│   │   │   ├── User.cs
 │   │   │   └── ApiResponse.cs
 │   │   ├── Data/
-│   │   │   └── AppDbContext.cs         # EF Core 数据库上下文
+│   │   │   └── AppDbContext.cs           # EF Core 数据库上下文
 │   │   └── Handlers/
 │   │       └── IHandler.cs
-│   ├── Com.AIServe.Utils/              # 工具类库
+│   ├── Com.AIServe.Utils/                # 工具类库
 │   │   └── LogHelper.cs
-│   ├── Com.AIServe.Handlers.Reservation/  # 预约处理模块
+│   ├── Com.AIServe.Handlers.Reservation/ # 预约处理模块
 │   │   └── Handlers/
 │   │       └── ReservationHandler.cs
-│   └── Com.AIServe.Handlers.Setup/        # 系统设置模块
-│       ├── Handlers/
-│       │   ├── SetupHandler.cs
-│       │   ├── LoginHandler.cs
-│       │   └── ReportHandler.cs
-│       └── Models/
-│           ├── SystemConfig.cs
-│           ├── LoginRequest.cs
-│           ├── LoginResponse.cs
-│           └── ReportData.cs
-└── doc/                                # 文档目录
+│   ├── Com.AIServe.Handlers.Setup/       # 系统设置模块
+│   │   ├── Handlers/
+│   │   │   ├── SetupHandler.cs
+│   │   │   ├── LoginHandler.cs
+│   │   │   └── ReportHandler.cs
+│   │   └── Models/
+│   │       ├── SystemConfig.cs
+│   │       ├── LoginRequest.cs
+│   │       ├── LoginResponse.cs
+│   │       └── ReportData.cs
+│   └── Com.AIServe.Handlers.User/        # 用户处理模块
+│       └── Handlers/
+│           └── UserHandler.cs
+└── doc/                                  # 文档目录
 ```
 
 ## 技术栈
@@ -100,8 +102,21 @@ dotnet run
 | `reservation_list` | GET | 获取预约列表 |
 | `reservation_get` | GET | 获取预约详情（需传 `id` 参数） |
 | `reservation_save` | POST | 创建/更新预约（推荐使用，不传 id 或 id <= 0 则创建，否则更新） |
+| `reservation_create` | POST | 创建预约（兼容旧版） |
+| `reservation_update` | POST | 更新预约（兼容旧版） |
 | `reservation_updatestatus` | POST | 更新预约状态 |
 | `reservation_delete` | GET | 删除预约（需传 `id` 参数） |
+
+### 用户管理
+
+| Action | Method | 描述 |
+|--------|--------|------|
+| `user_list` | GET | 获取用户列表 |
+| `user_get` | GET | 获取用户详情（需传 `id` 参数） |
+| `user_create` | POST | 创建用户 |
+| `user_update` | POST | 更新用户 |
+| `user_updateStatus` | POST | 更新用户状态 |
+| `user_delete` | GET | 删除用户（需传 `id` 参数） |
 
 ### 系统设置
 
@@ -120,3 +135,7 @@ dotnet run
 | `login_register` | POST | 用户注册 |
 
 接口详细文档请参考 [doc/接口文档.md](doc/接口文档.md)
+
+## 日志
+
+日志文件位于 `API/AIServe.API/bin/Debug/net10.0/log/` 目录下，按日期分割。
